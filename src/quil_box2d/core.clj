@@ -24,30 +24,27 @@
      :angle (.getAngle body)}))
 
 (defn reset-bodies [bodies]
-  (doall
-   (map #(doto %
-           (.setTransform (vec2 (* 25 (- (rand) 0.5))
-                                (+ 2 (* (rand) 3)))
-                          0)
-           (.setLinearVelocity (vec2 0 0))
-           (.setAwake true)
-           (.setActive true))
-        bodies)))
-
-(defn box2d-setup []
-  )
+  (doseq [b bodies]
+    (doto b
+      (.setTransform (vec2 (* 25 (- (rand) 0.5))
+                           (+ 2 (* (rand) 3)))
+                     0)
+      (.setLinearVelocity (vec2 0 0))
+      (.setAwake true)
+      (.setActive true)))
+  bodies)
 
 (defn setup []
   (q/frame-rate 30)
   (let [gravity (vec2 0 -10)
         world (World. gravity)
         bd-ground (BodyDef.)
-        ground (.createBody world bd-ground)
-        shape0 (EdgeShape.)
-        shape (PolygonShape.)]
-    (.set shape0 (vec2 -40 -25) (vec2 40 -25))
-    (.createFixture ground shape0 0)
-    (.setAsBox shape 1 1)
+        shape0 (doto (EdgeShape.)
+                 (.set (vec2 -40 -25) (vec2 40 -25)))
+        ground (doto (.createBody world bd-ground)
+                 (.createFixture shape0 0))
+        shape (doto (PolygonShape.)
+                (.setAsBox 1 1))]
     {:world world
      :bodies (reset-bodies (repeatedly 10 #(create-body world shape)))}))
 
@@ -66,17 +63,17 @@
       (q/with-rotation [angle]
         (q/rect 0 0 1 1)))))
 
-
 (defn -main []
   (q/sketch
-    :size [500 500]
-                                        ; setup function called only once, during sketch initialization.
-    :setup setup
-                                        ; update-state is called on each iteration before draw-state.
-    :update update-state
-    :draw draw-state
-                                        ; This sketch uses functional-mode middleware.
-                                        ; Check quil wiki for more info about middlewares and particularly
-                                        ; fun-mode.
-    :middleware [m/fun-mode]))
+   :size [500 500]      ; setup function called only once, during sketch
+                        ; initialization.
+   :setup setup
 
+   :update update-state ; update-state is called on each iteration before
+                        ; draw-state.
+
+   :draw draw-state     ; This sketch uses functional-mode middleware. Check
+                        ; quil wiki for more info about middlewares and
+                        ; particularly fun-mode.
+
+   :middleware [m/fun-mode]))
