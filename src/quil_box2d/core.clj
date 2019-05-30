@@ -1,34 +1,37 @@
 (ns quil-box2d.core
-  (:require [quil.core :as q :include-macros true]
-            [quil.middleware :as m]))
-
-(enable-console-print!)
+  (:require
+   [quil.core :as q]
+   [quil.middleware :as m])
+  (:import
+   (org.jbox2d.common Vec2)
+   (org.jbox2d.dynamics Body BodyDef BodyType World)
+   (org.jbox2d.collision.shapes EdgeShape PolygonShape)))
 
 (defn vec2 [a b]
-  (js/Box2D.b2Vec2. a b))
+  (Vec2. a b))
 
 (defn create-body [world shape]
-  (let [bd (doto (js/Box2D.b2BodyDef.)
-             (.set_type js/Box2D.b2_dynamicBody)
-             (.set_position (vec2 0 0)))]
-    (doto (.CreateBody world bd)
-      (.CreateFixture shape 5))))
+  (let [bd (BodyDef.)]
+    (set! (.type bd) BodyType/DYNAMIC)
+    (set! (.position bd) (vec2 0 0))
+    (doto (.createBody world bd)
+      (.createFixture shape 5))))
 
 (defn read-body [body]
-  (let [pos (.GetPosition body)]
-    {:x (.get_x pos)
-     :y (.get_y pos)
-     :angle (.GetAngle body)}))
+  (let [pos (.getPosition body)]
+    {:x (.x pos)
+     :y (.y pos)
+     :angle (.getAngle body)}))
 
 (defn reset-bodies [bodies]
   (doall
    (map #(doto %
-           (.SetTransform (vec2 (* 25 (- (rand) 0.5))
+           (.setTransform (vec2 (* 25 (- (rand) 0.5))
                                 (+ 2 (* (rand) 3)))
                           0)
-           (.SetLinearVelocity (vec2 0 0))
-           (.SetAwake 1)
-           (.SetActive 1))
+           (.setLinearVelocity (vec2 0 0))
+           (.setAwake true)
+           (.setActive true))
         bodies)))
 
 (defn box2d-setup []
@@ -37,20 +40,19 @@
 (defn setup []
   (q/frame-rate 30)
   (let [gravity (vec2 0 -10)
-        world (js/Box2D.b2World. gravity)
-        bd-ground (js/Box2D.b2BodyDef.)
-        ground (.CreateBody world bd-ground)
-        shape0 (js/Box2D.b2EdgeShape.)
-        shape (js/Box2D.b2PolygonShape.)]
-    (.Set shape0 (vec2 -40 -25)
-                 (vec2 40 -25))
-    (.CreateFixture ground shape0 0)
-    (.SetAsBox shape 1 1)
+        world (World. gravity)
+        bd-ground (BodyDef.)
+        ground (.createBody world bd-ground)
+        shape0 (EdgeShape.)
+        shape (PolygonShape.)]
+    (.set shape0 (vec2 -40 -25) (vec2 40 -25))
+    (.createFixture ground shape0 0)
+    (.setAsBox shape 1 1)
     {:world world
      :bodies (reset-bodies (repeatedly 10 #(create-body world shape)))}))
 
 (defn update-state [state]
-  (.Step (:world state) 0.1 2 2)
+  (.step (:world state) 0.1 2 2)
   state)
 
 (defn draw-state [state]
