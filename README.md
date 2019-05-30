@@ -1,16 +1,9 @@
-# test-js
+# quil-box2d-clj
 
-A Quil sketch designed to ... well, that part is up to you.
-
-## Usage
-
-Run `lein compile` command and open `index.html` in your browser.
-
-For interactive development run `lein cljsbuild auto` command. This command will be recompiling cljs to js each time you modify `core.cljs` and you can see result immediately by refreshing page.
+This is a port of https://github.com/nbeloglazov/quil-box2d-cljs to JVM clojure
+/ JBox2d.
 
 ## License
-
-Copyright © 2015 FIXME
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
