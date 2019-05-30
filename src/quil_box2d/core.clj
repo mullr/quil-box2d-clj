@@ -67,15 +67,16 @@
         (q/rect 0 0 1 1)))))
 
 
-(q/defsketch quil-box2d
-  :host "quil-box2d"
-  :size [500 500]
-  ; setup function called only once, during sketch initialization.
-  :setup setup
-  ; update-state is called on each iteration before draw-state.
-  :update update-state
-  :draw draw-state
-  ; This sketch uses functional-mode middleware.
-  ; Check quil wiki for more info about middlewares and particularly
-  ; fun-mode.
-  :middleware [m/fun-mode])
+(defn -main []
+  (q/sketch
+    :size [500 500]
+                                        ; setup function called only once, during sketch initialization.
+    :setup setup
+                                        ; update-state is called on each iteration before draw-state.
+    :update update-state
+    :draw draw-state
+                                        ; This sketch uses functional-mode middleware.
+                                        ; Check quil wiki for more info about middlewares and particularly
+                                        ; fun-mode.
+    :middleware [m/fun-mode]))
+

@@ -1,3 +1,0 @@
-{:deps
- {quil {:mvn/version "3.0.0"}
-  org.jbox2d/jbox2d-library {:mvn/version "2.2.1.1"}}}
